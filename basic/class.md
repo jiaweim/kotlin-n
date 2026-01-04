@@ -857,7 +857,131 @@ fun main() {
 
 #### copy
 
-虽然数据类的属性不要求为 `val`，也可以使用 `var`，但强烈建议在数据类中只使用 read-only 属性。
+数据类的属性不要求为 `val`，也可以使用 `var`，但强烈建议在数据类中只使用 read-only 属性。
 
-为了将 data 类作为 immutable 对象使用更简单，Kotlin 编译器还
+为了将 data 类作为 immutable 对象使用更简单，Kotlin 编译器还为它们生成了另一个方法：复制实例同时修改属性值。创建副本通常比原地修改实例更可取，副本有独立的生命周期，不会影响原实例。手动实现 `copy` 方法：
+
+```kotlin
+class Customer(val name: String, val postalCode: Int) {
+    fun copy(name: String = this.name, postalCode: Int = this.postalCode) =
+        Customer(name = name, postalCode = postalCode)
+
+    override fun toString(): String {
+        return "Customer(name='$name', postalCode=$postalCode)"
+    }
+}
+```
+
+使用 `copy` 方法：
+
+```kotlin
+fun main() {
+    val bob = Customer("Bob", 973293)
+    println(bob.copy(postalCode = 382555))
+    // Customer(name='Bob', postalCode=382555)
+}
+```
+
+> [!TIP]
+>
+> **Kotlin data 类和 Java records**
+>
+> Java 14 首次引入 Records，从概念上讲，Java record 与 Kotlin data 类非常相似，都是包含不可变的数值。record 也会根据值自动生成一些方法，如 `toString`, `hashCode` 和 `equals`。没有 `copy` 等其它便捷方法。
+>
+> 与 Kotlin data 类相比，Java record 有更多限制：
+>
+> - 所有属性要求为 `private`, `final`
+> - record 不能继承其它类
+> - 在内部不不能指定额外属性
+>
+> 出于互操作性，在 Kotlin 中可以用 `@JvmRecord` 注释数据类声明 record。此时，数据类需要遵守适用于 record 的限制。
+
+### 类委托：by keyword
+
+大型面向对象系统设计的一个常见问题是实现继承的脆弱性。当你扩展某个类并覆盖其部分方法，你的代码就不可避免会以来所扩展类的实现细节。随着系统更新，基类实现发生变化或添加新方法，你的代码可能会失效。基于该认知，Kotlin 的类默认为 `final`。这确保只有那些为可扩展性设计的类才能被继承。
+
+decorator 设计模式常用于为已有类添加新功能。即创建一个新类，实现与原类相同的接口，并将原类实例存储为字段。那些不需要修改原类行为的方法会被转发到原类实例。
+
+这种方法的一个缺点是**需要大量样板代码**。例如，即使不修改认为行为，装饰器实现 `Collection` 接口所需代码：
+
+```kotlin
+class DelegatingCollection<T> : Collection<T> {
+    private val innerList = arrayListOf<T>()
+
+    override val size: Int get() = innerList.size
+    override fun isEmpty(): Boolean = innerList.isEmpty()
+    override fun contains(element: T): Boolean = innerList.contains(element)
+    override fun iterator(): Iterator<T> = innerList.iterator()
+    override fun containsAll(elements: Collection<T>): Boolean =
+        innerList.containsAll(elements)
+
+}
+```
+
+好消息 Kotlin 将装饰器作为语言功能提供，当你实现一个接口，可以通过 `by` 关键字将实现委托给另一个对象。例如：
+
+```kotlin
+class DelegatingCollection<T>(
+    innerList: Collection<T> = mutableListOf<T>()
+) : Collection<T> by innerList
+```
+
+该类中所有委托实现都消失，编译器会自动生成这些内容，实现细节与 `DelegatingCollection` 类似。因为代码中并没有什么新内容，所以让编译器自动完成很合理。
+
+如果需要更改某些方法的行为，可以覆盖它们。
+
+下面例如该技巧实现一个集合，计算尝试添加元素的次数。例如，如果需要进行去重，可以用这样的集合来衡量效率，比较尝试添加元素的次数和集合的最终大小。
+
+```kotlin
+class CountingSet<T>(private val innerSet: MutableCollection<T> = hashSetOf<T>()) : MutableCollection<T> by innerSet {
+    var objectsAdded = 0
+
+    override fun add(element: T): Boolean {
+        objectsAdded++
+        return innerSet.add(element)
+    }
+
+    override fun addAll(elements: Collection<T>): Boolean {
+        objectsAdded += elements.size
+        return innerSet.addAll(elements)
+    }
+}
+
+fun main() {
+    val cset = CountingSet<Int>()
+    cset.addAll(listOf(1, 1, 2))
+    println("Added ${cset.objectsAdded} objects, ${cset.size} uniques.")
+    // Added 3 objects, 2 uniques.
+}
+```
+
+这里重写 `add` 和 `addAll` 方法增加计数，并将 `MutableCollection` 接口的余下实现委托给包装的容器。
+
+关键是这里没有对底层集合的实现产生任何依赖。只依赖底层集合的 API 实现所需功能。
+
+## object 关键字
+
+`object` 关键字定义一个类并同时创建该类的实例。应用场景：
+
+- 对象声明 - 定义单例的一种方法
+- 伴侣对象 - 可以包含工厂方法和与此类相关但不需要通过类实例调用的方法
+- 对象表达式 - 替代 Java 的匿名内部类
+
+### 对象声明：更简单的单例实现
+
+`object` 声明结合类声明和该类单个实例的声明。
+
+例如，实现一个工资单类：
+
+```kotlin
+object Payroll {
+    val allEmployees = mutableListOf<Person>()
+
+    fun calculateSalary() {
+        for (person in allEmployees) {
+            /* ... */
+        }
+    }
+}
+```
 
