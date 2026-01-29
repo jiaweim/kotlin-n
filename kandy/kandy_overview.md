@@ -5,7 +5,7 @@
 ***
 ## Kandy 是什么
 
-Kandy 是一个为 Kotlin 涉及的开源数据可视化库。它采用现代数据可视化方法，提供灵活的 DSL。该 DSL 与 Kotlin 的类型安全无缝集成，便于快速生成图表。Kandy 还支持多种流行引擎，提升了其功能和性能，实现高效的图表构建。
+Kandy 是一个为 Kotlin 设计的开源数据可视化库。它采用现代数据可视化方法，提供灵活的 DSL。该 DSL 与 Kotlin 的类型安全无缝集成，便于快速生成图表。Kandy 还支持多种流行引擎，提升了其功能和性能，实现高效的图表构建。
 
 Kandy 利用 [Lets-Plot 库](https://github.com/JetBrains/lets-plot-kotlin) 在交互式笔记本中显示，保存为独立的 HTML 文件，或导出为 PNG, SVG 和 JPEG 格式。该功能使得可以在 Kotlin 项目中使用 Kandy。
 
