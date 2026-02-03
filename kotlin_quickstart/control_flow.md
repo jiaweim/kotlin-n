@@ -3,6 +3,7 @@
 2026-01-29⭐
 @author Jiawei Mao
 ***
+
 ## if
 
 条件表达式使得程序可以根据布尔表达式的值执行不同操作。条件表达式有多种形式：
@@ -12,7 +13,7 @@
 - if-else-if
 - 嵌套 if
 
-与其它编程语言不同，Kotlin 的 `if` 是表达式，而非语句。即 `if` 会返回一个值，为 `if` 块中最后一个表达式的值。例如：
+与其它编程语言不同，Kotlin 的 `if` 是**表达式**而非语句，即 `if` 会返回一个值，返回的值为 `if` 块中最后一个表达式的值。例如：
 
 ```kotlin
 val max = if (a > b) {
@@ -24,15 +25,15 @@ val max = if (a > b) {
 }
 ```
 
-其中，变量 `max` 的值为最后一个表达式的值。需要注意，使用表达式样式的 `if`，必须包含一个 `else` 分支。
+其中，变量 `max` 的值为最后一个表达式的值。需要注意，使用**表达式样式**的 `if`，必须包含一个 `else` 分支。
 
-如果分支只有一个语句，则可以省略大括号：
+如果分支只有一个语句，可以省略大括号：
 
 ```kotlin
 val max = if (a > b) a else b
 ```
 
-不声明变量，直接使用 `if` 表达式的值：
+也可以不声明变量，直接使用 `if` 表达式的值：
 
 ```kotlin
 fun main() {
@@ -67,7 +68,7 @@ final String msg = num > 10
 
 ### when
 
-`when` 表达式简化多重 if-else-if。例如：
+`when` 简化多重 if-else-if。例如：
 
 ```kotlin
 val number = 5
@@ -81,9 +82,9 @@ when (number) {
 }
 ```
 
-`when` 表达式检查 `number` 变量的值，执行匹配条件的表达式。
+这里 `when` 检查 `number` 变量的值，执行匹配条件的表达式。
 
-和 `if` 表达式类似，`when` 也可以作为表达式使用，返回一个值。返回的值为匹配分支的最后一个表达式的结果。例如：
+和 `if` 类似，`when` 也可以作为表达式使用，返回一个值。返回的值为匹配分支的最后一个表达式的结果。例如：
 
 ```kotlin
 val number = 3
@@ -100,7 +101,7 @@ println(message) // Output: Three
 
 ### when 范围匹配
 
-`when` 表达式也可用于范围检查和复杂的布尔表达式。例如：
+`when` 可用于范围检查和复杂的布尔表达式。例如：
 
 ```kotlin
 val number = 15
@@ -115,7 +116,7 @@ when {
 
 ## Range
 
-检查 `c` 是否在 `a` 和 `b` 之间，可以采用如下方式：
+- 检查 `c` 是否在 `a` 和 `b` 之间，可以采用如下方式：
 
 ```kotlin
 val within = a <= c && c <= b
@@ -129,9 +130,7 @@ val within = c in a..b
 
 这里 `a..b` 是从 `a` 到 `b` 的区间（闭区间，包含两个边界）。`in` 是用于检查值是否在某个区间的关键字。
 
-也可以构造开闭区间：`a..<b`，从 `a` 到 `b`， 但不包含 `b` 边界。
-
-示例：
+- 构造开闭区间：`a..<b`，从 `a` 到 `b`， 但不包含 `b` 边界。示例：
 
 ```kotlin
 println(5 in 5..15)  // true
@@ -142,26 +141,26 @@ println(5 in 5..<15)  // true
 println(15 in 5..<15) // false
 ```
 
- 还可以使用 `!in` 直接检查某个数值**不在**某个范围。
+- 使用 `!in` 直接检查某个数值**不在**某个范围
 
 ```kotlin
 val notWithin = 100 !in 10..99 // true
 ```
 
-可以使用逻辑运算符组合不同区间：
+- 使用逻辑运算符组合不同区间
 
 ```kotlin
 val within = c in 5..10 || c in 20..30 || c in 40..50 // true if c is within at least one range
 ```
 
-range 本身是一个类型，可以分配给变量：
+- range 本身是一个类型，可以分配给变量：
 
 ```kotlin
 val range = 100..200
 println(300 in range) // false
 ```
 
-除了整数类型，也使用字符或字符串（按字典顺序）：
+- 除了整数类型，也使用字符或字符串（按字典顺序）
 
 ```kotlin
 println('b' in 'a'..'c') // true
@@ -173,7 +172,7 @@ println("abc" in "aab".."aac") // false
 
 ## when
 
-`when` 表达式根据变量值执行不同操作。
+`when` 根据变量值执行不同操作。
 
 **示例**：执行两个整数的加法、减法或乘法。使用 `when` 确定执行的操作
 
