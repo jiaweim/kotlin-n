@@ -7,3 +7,4 @@
 - [数据结构和算法](./data_structure.md)
 - [函数](./function.md)
 - [集合](./collection.md)
+- [数组](./array.md)
