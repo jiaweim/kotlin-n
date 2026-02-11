@@ -8,3 +8,4 @@
 - [函数](./function.md)
 - [集合](./collection.md)
 - [数组](./array.md)
+- [异常](./exception.md)
